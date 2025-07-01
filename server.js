@@ -4,7 +4,7 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -13,20 +13,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const projectsFile = "projects.json";
 const upload = multer({ dest: path.join(__dirname, "uploads") });
 
-app.post("/api/messages", (req, res) => {
-  const { name, email, message } = req.body;
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: "Semua field wajib diisi." });
-  }
-  const data = { name, email, message, date: new Date().toISOString() };
-  let messages = [];
-  if (fs.existsSync("messages.json")) {
-    messages = JSON.parse(fs.readFileSync("messages.json"));
-  }
-  messages.push(data);
-  fs.writeFileSync("messages.json", JSON.stringify(messages, null, 2));
-  res.json({ success: true });
-});
 app.get("/api/messages", (req, res) => {
   let messages = [];
   if (fs.existsSync("messages.json")) {
